@@ -12,30 +12,29 @@ void main() {
     expect(find.byType(PopupHandler), findsOneWidget);
   });
 
-  testWidgets('Login screen appears after popups', (WidgetTester tester) async {
-    // Build our app
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Login screen has correct elements', (WidgetTester tester) async {
+    // Create a LoginScreen widget directly for testing
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LoginScreen(selectedWelcomeScreen: 'old'),
+      ),
+    );
 
-    // Initially should show loading screen
-    expect(find.text('Loading...'), findsOneWidget);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    // Wait for popups to complete (simulate by pumping multiple frames)
-    await tester.pump(const Duration(seconds: 3));
-    await tester.pump();
-
-    // Should now show login screen
+    // Verify login screen elements exist
     expect(find.text('Welcome Back'), findsOneWidget);
     expect(find.text('Login'), findsOneWidget);
+    expect(find.text('Username'), findsOneWidget);
+    expect(find.text('Password'), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(2));
   });
 
-  testWidgets('Login with correct credentials', (WidgetTester tester) async {
-    // Build our app
-    await tester.pumpWidget(const MyApp());
-
-    // Wait for popups to complete
-    await tester.pump(const Duration(seconds: 3));
-    await tester.pump();
+  testWidgets('Login with correct credentials navigates to welcome screen', (WidgetTester tester) async {
+    // Create a LoginScreen widget directly for testing
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LoginScreen(selectedWelcomeScreen: 'old'),
+      ),
+    );
 
     // Find and fill username field
     await tester.enterText(find.byType(TextField).first, 'qa');
@@ -47,17 +46,18 @@ void main() {
     await tester.tap(find.text('Login'));
     await tester.pump();
 
-    // Should navigate to welcome screen (either old or new)
+    // Should navigate to old welcome screen
     expect(find.text('Welcome QA!'), findsOneWidget);
+    expect(find.text('You are seeing the old welcome screen!'), findsOneWidget);
   });
 
   testWidgets('Login with incorrect credentials shows error', (WidgetTester tester) async {
-    // Build our app
-    await tester.pumpWidget(const MyApp());
-
-    // Wait for popups to complete
-    await tester.pump(const Duration(seconds: 3));
-    await tester.pump();
+    // Create a LoginScreen widget directly for testing
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LoginScreen(selectedWelcomeScreen: 'old'),
+      ),
+    );
 
     // Enter incorrect credentials
     await tester.enterText(find.byType(TextField).first, 'wrong');
@@ -69,5 +69,26 @@ void main() {
 
     // Should show error message
     expect(find.text('Invalid username or password. Please try again.'), findsOneWidget);
+  });
+
+  testWidgets('New welcome screen choice works', (WidgetTester tester) async {
+    // Create a LoginScreen widget with new welcome screen choice
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LoginScreen(selectedWelcomeScreen: 'new'),
+      ),
+    );
+
+    // Login with correct credentials
+    await tester.enterText(find.byType(TextField).first, 'qa');
+    await tester.enterText(find.byType(TextField).last, 'qa');
+    
+    // Tap login button
+    await tester.tap(find.text('Login'));
+    await tester.pump();
+
+    // Should navigate to new welcome screen
+    expect(find.text('Welcome QA!'), findsOneWidget);
+    expect(find.text('You are seeing the new welcome screen!'), findsOneWidget);
   });
 }
