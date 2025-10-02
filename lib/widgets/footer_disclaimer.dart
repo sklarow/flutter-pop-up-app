@@ -39,12 +39,16 @@ class FooterDisclaimer extends StatelessWidget {
               GestureDetector(
                 key: const Key(AutomationIds.linkedinLink),
                 onTap: () => _launchUrl('https://www.linkedin.com/in/sklarow/'),
-                child: Text(
-                  'LinkedIn Profile',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.blue.shade600,
-                    decoration: TextDecoration.underline,
+                child: Semantics(
+                  label: AutomationIds.linkedinLink,
+                  excludeSemantics: true,
+                  child: Text(
+                    'LinkedIn Profile',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blue.shade600,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ),
@@ -58,12 +62,16 @@ class FooterDisclaimer extends StatelessWidget {
               GestureDetector(
                 key: const Key(AutomationIds.githubLink),
                 onTap: () => _launchUrl('https://github.com/sklarow/flutter-pop-up-app/'),
-                child: Text(
-                  'GitHub Repository',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.blue.shade600,
-                    decoration: TextDecoration.underline,
+                child: Semantics(
+                  label: AutomationIds.githubLink,
+                  excludeSemantics: true,
+                  child: Text(
+                    'GitHub Repository',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blue.shade600,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ),
