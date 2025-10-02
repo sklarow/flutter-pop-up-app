@@ -11,6 +11,45 @@ This app was created to **emulate asynchronous pop-up behavior** that commonly o
 - **Async operations** that can cause test instability
 - **Timing-dependent interactions** that lead to flaky tests
 
+
+## 📋 Test Scenarios
+
+### Manual Testing
+- **Launch app** → Random pop-ups appear immediately
+- **Handle pop-ups** in unpredictable order
+- **Restart app** → Different pop-up sequence each time
+- **Verify navigation** to selected welcome screen
+
+### Automated Testing Challenges
+- **Random pop-up handling** - Scripts must be robust to any sequence
+- **Timing management** - Wait for pop-ups to appear before interaction
+- **State persistence** - Remember user choices across pop-ups
+- **Error recovery** - Handle unexpected pop-up combinations
+
+### Real-World Conditional Pop-ups
+This app simulates real scenarios where, for example, pop-ups depend on device capabilities:
+
+**✅ Will Appear:**
+- User has biometrics enabled → Biometric authentication pop-up
+- Location services enabled → Location permission dialog
+- Camera available → Camera permission request
+- Network connected → Update available notification
+
+**❌ Won't Appear:**
+- No biometrics configured → Biometric pop-up skipped
+- Location disabled → No location permission dialog
+- No camera hardware → Camera permission never shown
+- Airplane mode → Network-related pop-ups absent
+
+**💡 Note:** While these scenarios could be easily handled with feature flags in controlled environments, test automation engineers often work with **third-party apps, legacy systems, or software they don't control** - making robust pop-up handling essential for reliable test execution.
+
+## 🧪 Why This Matters for Test Automation
+
+- **Reduces Test Flakiness** by practicing with unpredictable UI elements
+- **Improves Async Handling** skills for mobile test automation
+- **Simulates Real-World Scenarios** where pop-ups appear randomly
+- **Tests Robustness** of automation frameworks and scripts
+
 ## 🚀 Features
 
 ### Pop-up System
@@ -24,37 +63,6 @@ This app was created to **emulate asynchronous pop-up behavior** that commonly o
 1. **Exit Pop-up** - Closes the app (always appears)
 2. **Welcome Screen Choice** - Select between old/new welcome screen (always appears)
 3. **Generic Message Pop-ups** - Simple dismissible messages (30% chance each)
-
-### User Interface
-- **Modern Login Screen** with clean, professional design
-- **Two Welcome Screens** with distinct styling
-- **Responsive Design** that works on all screen sizes
-- **Scrollable Content** to prevent overflow issues
-
-## 🧪 Test Automation Challenge
-
-This app presents a **realistic test automation challenge** where:
-
-- Pop-ups appear **immediately on app startup**
-- The **order is completely random** (e.g., 1-2-3-4, 3-1-2, 2-1-4-3)
-- **Timing is unpredictable** - simulates real-world async operations
-- **State management** is required to handle user choices
-- **Error handling** is needed for different pop-up scenarios
-
-### Why This Matters for Test Automation
-
-- **Reduces Test Flakiness** by practicing with unpredictable UI elements
-- **Improves Async Handling** skills for mobile test automation
-- **Simulates Real-World Scenarios** where pop-ups appear randomly
-- **Tests Robustness** of automation frameworks and scripts
-
-## 📱 Screenshots
-
-The app features a clean, modern interface with:
-- Light grey background matching professional design standards
-- Purple gradient login button for visual appeal
-- Clean typography and spacing
-- Responsive layout for different screen sizes
 
 ## 🛠️ Technical Details
 
@@ -107,26 +115,6 @@ The app features a clean, modern interface with:
 - **Username**: `qa`
 - **Password**: `qa`
 
-## 🧪 Running Tests
-
-```bash
-# Run all tests
-flutter test
-
-# Run tests with coverage
-flutter test --coverage
-```
-
-## 📦 Building APK
-
-```bash
-# Build release APK
-flutter build apk --release
-
-# APK will be generated at:
-# build/app/outputs/flutter-apk/app-release.apk
-```
-
 ## 🤖 CI/CD Pipeline
 
 This project includes **GitHub Actions** for automated:
@@ -134,22 +122,6 @@ This project includes **GitHub Actions** for automated:
 - **APK Building** for release distribution
 - **Automatic Releases** with downloadable APK files
 - **Cross-platform Icon Generation**
-
-## 📋 Test Scenarios
-
-### Manual Testing
-1. **Launch the app** - Pop-ups will appear immediately
-2. **Handle pop-ups** in the order they appear
-3. **Test different sequences** by restarting the app
-4. **Verify navigation** to correct welcome screen
-5. **Test app closing** functionality
-
-### Automated Testing Challenges
-- **Random pop-up handling** - Scripts must be robust
-- **Timing management** - Wait for pop-ups to appear
-- **State persistence** - Remember user choices
-- **Error recovery** - Handle unexpected pop-up sequences
-
 
 ## 🔗 Links
 
