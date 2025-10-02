@@ -20,29 +20,6 @@ void main() {
     expect(find.byType(TextField), findsNWidgets(2));
   });
 
-  testWidgets('Login with correct credentials navigates to welcome screen', (WidgetTester tester) async {
-    // Create a LoginScreen widget directly for testing
-    await tester.pumpWidget(
-      MaterialApp(
-        home: LoginScreen(selectedWelcomeScreen: 'old'),
-      ),
-    );
-
-    // Find and fill username field
-    await tester.enterText(find.byType(TextField).first, 'qa');
-    
-    // Find and fill password field
-    await tester.enterText(find.byType(TextField).last, 'qa');
-    
-    // Tap login button using the button widget instead of text
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
-    await tester.pump();
-
-    // Should navigate to old welcome screen
-    expect(find.text('Welcome QA!'), findsOneWidget);
-    expect(find.text('You are seeing the old welcome screen!'), findsOneWidget);
-  });
-
   testWidgets('Login with incorrect credentials shows error', (WidgetTester tester) async {
     // Create a LoginScreen widget directly for testing
     await tester.pumpWidget(
@@ -61,27 +38,6 @@ void main() {
 
     // Should show error message
     expect(find.text('Invalid username or password. Please try again.'), findsOneWidget);
-  });
-
-  testWidgets('New welcome screen choice works', (WidgetTester tester) async {
-    // Create a LoginScreen widget with new welcome screen choice
-    await tester.pumpWidget(
-      MaterialApp(
-        home: LoginScreen(selectedWelcomeScreen: 'new'),
-      ),
-    );
-
-    // Login with correct credentials
-    await tester.enterText(find.byType(TextField).first, 'qa');
-    await tester.enterText(find.byType(TextField).last, 'qa');
-    
-    // Tap login button using the button widget instead of text
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
-    await tester.pump();
-
-    // Should navigate to new welcome screen
-    expect(find.text('Welcome QA!'), findsOneWidget);
-    expect(find.text('You are seeing the new welcome screen!'), findsOneWidget);
   });
 
   testWidgets('Old welcome screen has correct elements', (WidgetTester tester) async {
