@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_application_pop_ups/main.dart';
+import 'package:flutter_application_pop_ups/screens/login_screen.dart';
+import 'package:flutter_application_pop_ups/screens/old_welcome_screen.dart';
+import 'package:flutter_application_pop_ups/screens/new_welcome_screen.dart';
+import 'package:flutter_application_pop_ups/widgets/footer_disclaimer.dart';
+import 'package:flutter_application_pop_ups/constants/automation_ids.dart';
 
 void main() {
   testWidgets('Login screen has correct elements', (WidgetTester tester) async {
@@ -15,9 +19,9 @@ void main() {
     // Verify login screen elements exist
     expect(find.text('Welcome Back!'), findsOneWidget);
     expect(find.text('Pop-up Challenge - Login'), findsOneWidget);
-    expect(find.byKey(const Key('login_button')), findsOneWidget);
-    expect(find.text('Username'), findsOneWidget);
-    expect(find.text('Password'), findsOneWidget);
+    expect(find.byKey(const Key(AutomationIds.loginButton)), findsOneWidget);
+    expect(find.byKey(const Key(AutomationIds.usernameField)), findsOneWidget);
+    expect(find.byKey(const Key(AutomationIds.passwordField)), findsOneWidget);
     expect(find.byType(TextField), findsNWidgets(2));
     expect(find.byType(FooterDisclaimer), findsOneWidget);
   });
@@ -35,7 +39,7 @@ void main() {
     await tester.enterText(find.byType(TextField).last, 'wrong');
     
     // Find the login button by key
-    final loginButton = find.byKey(const Key('login_button'));
+    final loginButton = find.byKey(const Key(AutomationIds.loginButton));
     await tester.ensureVisible(loginButton);
     await tester.pump();
     
@@ -44,7 +48,7 @@ void main() {
     await tester.pump();
 
     // Should show error message
-    expect(find.text('Invalid username or password. Please try again.'), findsOneWidget);
+    expect(find.byKey(const Key(AutomationIds.errorMessage)), findsOneWidget);
   });
 
   testWidgets('Old welcome screen has correct elements', (WidgetTester tester) async {
@@ -58,7 +62,7 @@ void main() {
     // Verify old welcome screen elements exist
     expect(find.text('Welcome QA!'), findsOneWidget);
     expect(find.text('You are seeing the old welcome screen!'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'Logout'), findsOneWidget);
+    expect(find.byKey(const Key(AutomationIds.oldWelcomeLogout)), findsOneWidget);
     expect(find.byType(FooterDisclaimer), findsOneWidget);
   });
 
@@ -73,7 +77,7 @@ void main() {
     // Verify new welcome screen elements exist
     expect(find.text('Welcome QA!'), findsOneWidget);
     expect(find.text('You are seeing the new welcome screen!'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'Logout'), findsOneWidget);
+    expect(find.byKey(const Key(AutomationIds.newWelcomeLogout)), findsOneWidget);
     expect(find.byType(FooterDisclaimer), findsOneWidget);
   });
 
@@ -87,7 +91,7 @@ void main() {
 
     // Verify footer disclaimer elements exist
     expect(find.text('Developed by Allan Sklarow'), findsOneWidget);
-    expect(find.text('LinkedIn Profile'), findsOneWidget);
-    expect(find.text('GitHub Repository'), findsOneWidget);
+    expect(find.byKey(const Key(AutomationIds.linkedinLink)), findsOneWidget);
+    expect(find.byKey(const Key(AutomationIds.githubLink)), findsOneWidget);
   });
 }
