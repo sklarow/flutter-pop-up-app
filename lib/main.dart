@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:math';
+import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -15,13 +18,191 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      home: const PopupHandler(),
     );
   }
 }
 
+class PopupHandler extends StatefulWidget {
+  const PopupHandler({super.key});
+
+  @override
+  State<PopupHandler> createState() => _PopupHandlerState();
+}
+
+class _PopupHandlerState extends State<PopupHandler> {
+  String selectedWelcomeScreen = 'old';
+  bool popupsCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _showPopups();
+  }
+
+  Future<void> _showPopups() async {
+    // Create list of popups to show
+    List<PopupType> popupsToShow = [PopupType.exit, PopupType.welcomeChoice];
+    
+    // Add optional popups with 30% chance each
+    if (Random().nextDouble() < 0.3) {
+      popupsToShow.add(PopupType.message1);
+    }
+    if (Random().nextDouble() < 0.3) {
+      popupsToShow.add(PopupType.message2);
+    }
+    
+    // Shuffle the list for random order
+    popupsToShow.shuffle();
+    
+    // Show popups one by one with delay
+    for (PopupType popupType in popupsToShow) {
+      await Future.delayed(const Duration(milliseconds: 500)); // Loading delay
+      await _showPopup(popupType);
+    }
+    
+    setState(() {
+      popupsCompleted = true;
+    });
+  }
+
+  Future<void> _showPopup(PopupType popupType) async {
+    switch (popupType) {
+      case PopupType.exit:
+        await _showExitPopup();
+        break;
+      case PopupType.welcomeChoice:
+        await _showWelcomeChoicePopup();
+        break;
+      case PopupType.message1:
+        await _showMessagePopup(
+          'Inspirational Quote',
+          'The only way to do great work is to love what you do. - Steve Jobs',
+        );
+        break;
+      case PopupType.message2:
+        await _showMessagePopup(
+          'Motivational Message',
+          'Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill',
+        );
+        break;
+    }
+  }
+
+  Future<void> _showExitPopup() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Don\'t click in OK'),
+          content: const Text('Clicking in OK will close the app'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                SystemNavigator.pop(); // Close the app
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showWelcomeChoicePopup() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Welcome screen:'),
+          content: const Text('What welcome screen you want to see?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Old'),
+              onPressed: () {
+                setState(() {
+                  selectedWelcomeScreen = 'old';
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('New'),
+              onPressed: () {
+                setState(() {
+                  selectedWelcomeScreen = 'new';
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showMessagePopup(String title, String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Dismiss'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!popupsCompleted) {
+      return const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Loading...'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return LoginScreen(selectedWelcomeScreen: selectedWelcomeScreen);
+  }
+}
+
+enum PopupType {
+  exit,
+  welcomeChoice,
+  message1,
+  message2,
+}
+
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final String selectedWelcomeScreen;
+  
+  const LoginScreen({super.key, required this.selectedWelcomeScreen});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -37,11 +218,18 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text.trim();
 
     if (username == 'qa' && password == 'qa') {
-      // Navigate to old welcome screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const OldWelcomeScreen()),
-      );
+      // Navigate to selected welcome screen
+      if (widget.selectedWelcomeScreen == 'new') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const NewWelcomeScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const OldWelcomeScreen()),
+        );
+      }
     } else {
       setState(() {
         _errorMessage = 'Invalid username or password. Please try again.';
@@ -209,7 +397,7 @@ class OldWelcomeScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    MaterialPageRoute(builder: (context) => const PopupHandler()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -284,6 +472,7 @@ class NewWelcomeScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const Text(
                 'You are seeing the new welcome screen!',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 22,
                   color: Colors.white,
@@ -296,7 +485,7 @@ class NewWelcomeScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    MaterialPageRoute(builder: (context) => const PopupHandler()),
                     (route) => false,
                   );
                 },
