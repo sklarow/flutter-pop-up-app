@@ -1,11 +1,11 @@
 {
-    "name": "flutter_application_pop_ups",
-    "short_name": "flutter_application_pop_ups",
+    "name": "Pop-up Challenge",
+    "short_name": "Pop-up Challenge",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#2196F3",
+    "description": "A Flutter app for test automation challenges with random pop-ups.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

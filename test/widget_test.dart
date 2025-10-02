@@ -13,11 +13,13 @@ void main() {
     );
 
     // Verify login screen elements exist
-    expect(find.text('Welcome Back'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'Login'), findsOneWidget);
+    expect(find.text('Welcome Back!'), findsOneWidget);
+    expect(find.text('Pop-up Challenge - Login'), findsOneWidget);
+    expect(find.byKey(const Key('login_button')), findsOneWidget);
     expect(find.text('Username'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.byType(TextField), findsNWidgets(2));
+    expect(find.byType(FooterDisclaimer), findsOneWidget);
   });
 
   testWidgets('Login with incorrect credentials shows error', (WidgetTester tester) async {
@@ -32,8 +34,13 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'wrong');
     await tester.enterText(find.byType(TextField).last, 'wrong');
     
-    // Tap login button using the button widget instead of text
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
+    // Find the login button by key
+    final loginButton = find.byKey(const Key('login_button'));
+    await tester.ensureVisible(loginButton);
+    await tester.pump();
+    
+    // Tap login button
+    await tester.tap(loginButton, warnIfMissed: false);
     await tester.pump();
 
     // Should show error message
@@ -52,6 +59,7 @@ void main() {
     expect(find.text('Welcome QA!'), findsOneWidget);
     expect(find.text('You are seeing the old welcome screen!'), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, 'Logout'), findsOneWidget);
+    expect(find.byType(FooterDisclaimer), findsOneWidget);
   });
 
   testWidgets('New welcome screen has correct elements', (WidgetTester tester) async {
@@ -66,5 +74,20 @@ void main() {
     expect(find.text('Welcome QA!'), findsOneWidget);
     expect(find.text('You are seeing the new welcome screen!'), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, 'Logout'), findsOneWidget);
+    expect(find.byType(FooterDisclaimer), findsOneWidget);
+  });
+
+  testWidgets('Footer disclaimer has correct content', (WidgetTester tester) async {
+    // Create a LoginScreen widget directly for testing
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LoginScreen(selectedWelcomeScreen: 'old'),
+      ),
+    );
+
+    // Verify footer disclaimer elements exist
+    expect(find.text('Developed by Allan Sklarow'), findsOneWidget);
+    expect(find.text('LinkedIn Profile'), findsOneWidget);
+    expect(find.text('GitHub Repository'), findsOneWidget);
   });
 }
